@@ -2,5 +2,9 @@
   "files.associations": {
     "*.tmpl": "html",
     "*.go.tmpl": "html"
-  }
+  },
+  "[go]": {
+    "editor.tabSize": 4,
+    "editor.insertSpaces": false
+  },
 }
