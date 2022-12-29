@@ -6,25 +6,36 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+
+	"github.com/marie-0405/go_myapp/pkg/config"
 )
 
-func RenderTemplate(w http.ResponseWriter, tmpl string) {
-	// get the template cache from the app config
+var app *config.AppConfig
 
-	// create cached template
-	tc, err := CreateTemplateCache()
-	if err != nil {
-		log.Fatal(err)
+// NewTemplates sets the config for the template package
+func NewTemplates(a *config.AppConfig) {
+	app = a
+}
+
+func RenderTemplate(w http.ResponseWriter, tmpl string) {
+	var tc map[string]*template.Template
+
+	if app.UseCache {
+		// get the template cache from the app config
+		tc = app.TemplateCache
+	} else {
+		tc, _ = CreateTemplateCache()
 	}
+
 	// get requested template
 	t, ok := tc[tmpl]
 	if !ok {
-		log.Fatal("tc has no key of tmpl")
+		log.Fatal("Could not get template from template cache")
 	}
 
 	buf := new(bytes.Buffer)
 
-	err = t.Execute(buf, nil)
+	err := t.Execute(buf, nil)
 	if err != nil {
 		log.Println(err)
 	}
